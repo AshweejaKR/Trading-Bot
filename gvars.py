@@ -19,6 +19,10 @@ stopLossMargin = 0.01
 
 sleepTime = 20 # Delay
 
-f_str = 'TIME\t\t\t\t\t TICKER\t\t\t\tOrder\t\t\t\tPRICE\t\t\t\t QTY\n'
+f_str = 'TIME\t\t\t\t\t TICKER\t\t\t\t Order\t\t\t\t PRICE\t\t\t\t QTY\n'
 
+csv_headr = ['TIME', 'TICKER', 'Order', 'PRICE', 'QTY']
+csv_body = []
+
+filename = 'default_report.csv'
 # End here

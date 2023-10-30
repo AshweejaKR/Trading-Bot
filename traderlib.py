@@ -19,6 +19,10 @@ class Trader(threading.Thread):
         self.api = api
         self.ticker = ticker
         self.trend = trend
+        self.csv_data_b = []
+        self.csv_data_s = []
+        self.ortype = 'NA'
+        self.currentPrice = 'NA'
         self.trigger = float(trigger) * 1.00125
         self.thread_name = self.ticker + '_' + self.trend + '_at_' + str(self.trigger)
         threading.Thread.__init__(self, name=self.thread_name)
@@ -161,6 +165,7 @@ class Trader(threading.Thread):
                 is_amo = False,
                 order_tag ='order1')
 
+            # order = {'stat': 'Ok', 'NOrdNo': '5555'}
             lg.info('order response: %s' % order)
             status = 'NA'
             if(order['stat'] == 'Ok'):
@@ -176,6 +181,8 @@ class Trader(threading.Thread):
                 lg.info('Still order in open')
 
             cur_time = dt.datetime.now().time()
+            self.ortype = ortype
+            self.currentPrice = currentPrice
             gvars.f_str = gvars.f_str + str(cur_time)[:-7] + '\t\t\t\t' + str(self.ticker) + '\t\t\t\t' + str(ortype) + '\t\t\t\t' + str(currentPrice) + '\t\t\t\t' + str(sharesQty) + '\n'
             if(status == 'complete'):
                 lg.info('Order excecuted')
@@ -294,7 +301,13 @@ class Trader(threading.Thread):
 
         # submit order (limit)
         success = self.submit_order(sharesQty)
-        print('ENTER: ', success)
+        cur_time = dt.datetime.now().time()
+        self.csv_data_b.append(str(cur_time)[:-7])
+        self.csv_data_b.append(str(self.ticker))
+        self.csv_data_b.append(str(self.ortype))
+        self.csv_data_b.append(str(self.currentPrice))
+        self.csv_data_b.append(str(sharesQty))
+        gvars.csv_body.append(self.csv_data_b)
 
         # if(success):
         lg.info('%s Position ENTER for %s!' % (self.trend, self.ticker))
@@ -310,7 +323,12 @@ class Trader(threading.Thread):
 
         #GET OUT
         success = self.submit_order(sharesQty, exit = True)
-        print('EXIT: ', success)
+        self.csv_data_s.append(str(cur_time)[:-7])
+        self.csv_data_s.append(str(self.ticker))
+        self.csv_data_s.append(str(self.ortype))
+        self.csv_data_s.append(str(self.currentPrice))
+        self.csv_data_s.append(str(sharesQty))
+        gvars.csv_body.append(self.csv_data_s)
 
         lg.info('%s Position EXIT for %s!' % (self.trend, self.ticker))
 

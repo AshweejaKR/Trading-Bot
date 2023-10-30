@@ -168,6 +168,17 @@ def gen_report():
         f.flush()
         f.close()
 
+    # writing to csv file 
+    with open(gvars.filename, 'w') as csvfile: 
+        # creating a csv writer object 
+        csvwriter = csv.writer(csvfile) 
+        
+        # writing the fields 
+        csvwriter.writerow(gvars.csv_headr) 
+        
+        # writing the data rows 
+        csvwriter.writerows(gvars.csv_body)
+
 def main():
     global username
     global api_key
